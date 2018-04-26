@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Bellwether.UsageBilling", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bellwether.StorageClient", "Bellwether.StorageClient\Bellwether.StorageClient.csproj", "{688760FC-B236-45D4-933A-A2DAC9EEA180}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bellwether.Dal", "Bellwether.Dal\Bellwether.Dal.csproj", "{F20F8DBE-A859-47E9-9DC9-D605F3208EC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{688760FC-B236-45D4-933A-A2DAC9EEA180}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{688760FC-B236-45D4-933A-A2DAC9EEA180}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{688760FC-B236-45D4-933A-A2DAC9EEA180}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F20F8DBE-A859-47E9-9DC9-D605F3208EC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F20F8DBE-A859-47E9-9DC9-D605F3208EC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F20F8DBE-A859-47E9-9DC9-D605F3208EC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F20F8DBE-A859-47E9-9DC9-D605F3208EC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

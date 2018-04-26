@@ -11,6 +11,6 @@
 		"ApplicationDomain": "belltec.com"
 	},
 	"ConnectionStrings": {
-		"DefaultConnection": ""
+		"DefaultConnection": "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=Bellwether;Integrated Security=True;Pooling=False"
 	}
 }

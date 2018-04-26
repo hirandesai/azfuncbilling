@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -49,9 +50,13 @@ namespace Bellwether.Configuration
 
 		public static string GetAppSetting(string key)
 		{
-			var value = Environment.GetEnvironmentVariable(key, EnvironmentVariableTarget.Process);
+			return CloudConfigurationManager.GetSetting(key, false);
+		}
+		public static string GetConnectionString(string key)
+		{
+			var value = GetAppSetting(key);
 			if (string.IsNullOrEmpty(value))
-				value = CloudConfigurationManager.GetSetting(key, false);
+				value = ConfigurationManager.ConnectionStrings[key].ConnectionString;
 
 			return value;
 		}

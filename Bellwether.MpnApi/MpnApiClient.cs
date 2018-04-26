@@ -5,6 +5,7 @@ using Microsoft.Store.PartnerCenter.Extensions;
 using Microsoft.Store.PartnerCenter.Models;
 using Microsoft.Store.PartnerCenter.Models.Customers;
 using Microsoft.Store.PartnerCenter.Models.Query;
+using Microsoft.Store.PartnerCenter.Models.Subscriptions;
 using Microsoft.Store.PartnerCenter.RequestContext;
 using System;
 using System.Collections.Generic;
@@ -27,17 +28,22 @@ namespace Bellwether.MpnApi
 			return client;
 		}
 
-		public async Task<IResourceCollectionEnumerator<SeekBasedResourceCollection<Customer>>> GetCustomers(int RecordsToFetch = 100)
+		public async Task<IResourceCollectionEnumerator<SeekBasedResourceCollection<Customer>>> GetCustomersAsync(int RecordsToFetch = 100)
 		{
 			IPartner scopedPartnerOperations = ApiCaller.With(RequestContextFactory.Instance.Create(Guid.NewGuid()));
-			var customersBatch = scopedPartnerOperations.Customers.Query(QueryFactory.Instance.BuildIndexedQuery(RecordsToFetch));
+			var customersBatch = await scopedPartnerOperations.Customers.QueryAsync(QueryFactory.Instance.BuildIndexedQuery(RecordsToFetch));
 			//#if !RELEASE
 			//			var fieldFilter = new SimpleFieldFilter(CustomerSearchField.CompanyName.ToString(), FieldFilterOperation.StartsWith, "Elect");
 			//			var customersBatch = await scopedPartnerOperations.Customers.QueryAsync(QueryFactory.Instance.BuildIndexedQuery(RecordsToFetch, filter: fieldFilter));
 			//#else
-			//			var customersBatch = scopedPartnerOperations.Customers.Query(QueryFactory.Instance.BuildIndexedQuery(RecordsToFetch));
+			//			var customersBatch = scopedPartnerOperations.Customers.QueryAsync(QueryFactory.Instance.BuildIndexedQuery(RecordsToFetch));
 			//#endif
 			return scopedPartnerOperations.Enumerators.Customers.Create(customersBatch);
+		}
+
+		public async Task<ResourceCollection<Subscription>> GetSubscriptionsAsync(string CustomerId)
+		{
+			return await ApiCaller.Customers.ById(CustomerId).Subscriptions.GetAsync();
 		}
 	}
 }

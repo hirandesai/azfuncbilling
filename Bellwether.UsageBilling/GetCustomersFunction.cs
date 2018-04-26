@@ -11,6 +11,7 @@ using Microsoft.Store.PartnerCenter.Enumerators;
 using Bellwether.MpnApi;
 using Bellwether.StorageClient;
 using Bellwether.StorageClient.MessageFormats;
+using Bellwether.Dal;
 
 namespace Bellwether.UsageBilling
 {
@@ -50,7 +51,7 @@ namespace Bellwether.UsageBilling
 				log.Info($"Connected to MPN network");
 
 				SeekBasedResourceCollection<Customer> customers;
-				IResourceCollectionEnumerator<SeekBasedResourceCollection<Customer>> enumerator = await mpnClient.GetCustomers();
+				IResourceCollectionEnumerator<SeekBasedResourceCollection<Customer>> enumerator = await mpnClient.GetCustomersAsync();
 				while (enumerator.HasValue)
 				{
 					customers = enumerator.Current;
@@ -62,7 +63,9 @@ namespace Bellwether.UsageBilling
 					{
 						log.Info($"0 customers found");
 					}
+					log.Verbose($"Fetching next page");
 					await enumerator.NextAsync();
+					log.Verbose($"Next page retrived");
 				}
 				log.Info($"Finished processing customers");
 			}
@@ -76,10 +79,22 @@ namespace Bellwether.UsageBilling
 		private async static Task ProcessCustomers(SeekBasedResourceCollection<Customer> customers, TraceWriter log)
 		{
 			log.Verbose($"{customers.TotalCount } customers found");
-			CustomersQueueClient queueClient = new CustomersQueueClient(ConfigurationHelper.GetAppSetting(ConfigurationKeys.StorageConnectoinString));			
+			CustomersQueueClient queueClient = new CustomersQueueClient(ConfigurationHelper.GetAppSetting(ConfigurationKeys.StorageConnectoinString));
 			foreach (var customer in customers.Items)
 			{
-				await queueClient.AddMessageAsync(new CustomerMessage() { CustomerId = customer.Id });
+				try
+				{
+					log.Verbose($"Processing customer - {customer.Id }, Relationship {customer.RelationshipToPartner}");
+					log.Verbose($"Customer {customer.Id }");
+					if (customer.RelationshipToPartner != CustomerPartnerRelationship.Advisor)
+					{
+						await queueClient.AddMessageAsync(new CustomerMessage() { CustomerId = customer.Id });
+					}
+				}
+				catch (Exception ex)
+				{
+					log.Error($"Some error occured for customer - {customer.Id}, Relationship {customer.RelationshipToPartner}", ex);
+				}
 			}
 		}
 	}

@@ -9,12 +9,14 @@
     <DefineConstants>TRACE;DEBUG;NET461</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="EntityFramework" Version="6.2.0" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.6" />
     <PackageReference Include="Microsoft.Store.PartnerCenter" Version="1.7.1" />
     <PackageReference Include="WindowsAzure.Storage" Version="8.7.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bellwether.Configuration\Bellwether.Configuration.csproj" />
+    <ProjectReference Include="..\Bellwether.Dal\Bellwether.Dal.csproj" />
     <ProjectReference Include="..\Bellwether.MpnApi\Bellwether.MpnApi.csproj" />
     <ProjectReference Include="..\Bellwether.StorageClient\Bellwether.StorageClient.csproj" />
   </ItemGroup>

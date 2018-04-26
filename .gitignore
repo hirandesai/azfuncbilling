@@ -14,3 +14,5 @@
 /packages
 /Bellwether.StorageClient/obj/Debug
 /Bellwether.StorageClient/bin/Debug
+/Bellwether.Dal/bin/Debug
+/Bellwether.Dal/obj/Debug
