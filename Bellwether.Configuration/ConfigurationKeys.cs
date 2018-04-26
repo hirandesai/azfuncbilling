@@ -7,8 +7,7 @@ using System.Threading.Tasks;
 namespace Bellwether.Configuration
 {
 	public class ConfigurationKeys
-	{
-		public const string MPNId = "MPNId";
+	{		
 		public const string DbConnectoinString = "DefaultConnection";
 		public class MPN
 		{

@@ -1,7 +1,16 @@
 {
-    "IsEncrypted": false,
-    "Values": {
-        "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-        "AzureWebJobsDashboard": "UseDevelopmentStorage=true"
-    }
+	"IsEncrypted": false,
+	"Values": {
+		"AzureWebJobsStorage": "UseDevelopmentStorage=true",
+		"AzureWebJobsDashboard": "UseDevelopmentStorage=true",
+		"PartnerServiceApiRoot": "https://api.partnercenter.microsoft.com",
+		"Authority": "https://login.windows.net",
+		"ResourceUrl": "https://graph.windows.net",
+		"ApplicationId": "8e945da4-462f-4cbe-9aee-56dfb7af20f4",
+		"ApplicationSecret": "bYogEZRN28N56y9FtGubK0guyZJThaiHBQaWUCq0wV0=",
+		"ApplicationDomain": "belltec.com"
+	},
+	"ConnectionStrings": {
+		"DefaultConnection": ""
+	}
 }

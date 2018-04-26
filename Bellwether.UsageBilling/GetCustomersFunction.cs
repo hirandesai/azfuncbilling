@@ -73,11 +73,11 @@ namespace Bellwether.UsageBilling
 		private static void ProcessCustomers(SeekBasedResourceCollection<Customer> customers, TraceWriter log)
 		{
 			log.Verbose($"{customers.TotalCount } customers found");
-			Parallel.ForEach(customers.Items, (c) =>
-			{
+			//Parallel.ForEach(customers.Items, (c) =>
+			//{
 
 
-			});
+			//});
 		}
 	}
 }
