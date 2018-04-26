@@ -1,0 +1,14 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/azfuncbilling/v15
+/.vs/Bellwether.UsageBilling/v15
+/.vs
+/Bellwether.Configuration/obj
+/Bellwether.Configuration/bin
+/Bellwether.MpnApi/bin
+/Bellwether.MpnApi/obj
+/Bellwether.UsageBilling/bin
+/Bellwether.UsageBilling/obj
+/packages
