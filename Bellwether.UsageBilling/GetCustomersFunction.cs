@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Host;
 using System.Net.Http;
@@ -8,6 +9,8 @@ using Microsoft.Store.PartnerCenter.Models;
 using Microsoft.Store.PartnerCenter.Models.Customers;
 using Microsoft.Store.PartnerCenter.Enumerators;
 using Bellwether.MpnApi;
+using Bellwether.StorageClient;
+using Bellwether.StorageClient.MessageFormats;
 
 namespace Bellwether.UsageBilling
 {
@@ -53,7 +56,7 @@ namespace Bellwether.UsageBilling
 					customers = enumerator.Current;
 					if (customers?.Items != null && customers?.TotalCount > 0)
 					{
-						ProcessCustomers(customers, log);
+						await ProcessCustomers(customers, log);
 					}
 					else
 					{
@@ -70,14 +73,14 @@ namespace Bellwether.UsageBilling
 			log.Info($"Get customers function execution completed at {DateTime.UtcNow} UTC");
 		}
 
-		private static void ProcessCustomers(SeekBasedResourceCollection<Customer> customers, TraceWriter log)
+		private async static Task ProcessCustomers(SeekBasedResourceCollection<Customer> customers, TraceWriter log)
 		{
 			log.Verbose($"{customers.TotalCount } customers found");
-			//Parallel.ForEach(customers.Items, (c) =>
-			//{
-
-
-			//});
+			CustomersQueueClient queueClient = new CustomersQueueClient(ConfigurationHelper.GetAppSetting(ConfigurationKeys.StorageConnectoinString));			
+			foreach (var customer in customers.Items)
+			{
+				await queueClient.AddMessageAsync(new CustomerMessage() { CustomerId = customer.Id });
+			}
 		}
 	}
 }

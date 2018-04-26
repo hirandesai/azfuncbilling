@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 namespace Bellwether.Configuration
 {
 	public class ConfigurationKeys
-	{		
+	{
 		public const string DbConnectoinString = "DefaultConnection";
+		public const string StorageConnectoinString = "AzureWebJobsStorage";
 		public class MPN
 		{
 			public const string PartnerServiceApiRoot = "PartnerServiceApiRoot";

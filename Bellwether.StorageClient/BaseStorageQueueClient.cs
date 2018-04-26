@@ -12,6 +12,13 @@ namespace Bellwether.StorageClient
 	public class BaseStorageQueueClient<T>
 	{
 		private readonly QueueTypes queueType;
+		private string QueueName
+		{
+			get
+			{
+				return queueType.ToString().ToLower();
+			}
+		}
 		private readonly string storageConnectionString;
 		public BaseStorageQueueClient(QueueTypes queueType, string storageConnectionString)
 		{
@@ -21,11 +28,10 @@ namespace Bellwether.StorageClient
 		public async Task AddMessageAsync(T message)
 		{
 			CloudQueueClient queueClient = GetStorageAccount().CreateCloudQueueClient();
-			var requestQueue = queueClient.GetQueueReference(queueType.ToString());
+			var requestQueue = queueClient.GetQueueReference(QueueName);
 			requestQueue.CreateIfNotExists();
-
 			await requestQueue.AddMessageAsync(new CloudQueueMessage(JsonConvert.SerializeObject(message)));
-		}
+		}		
 		private CloudStorageAccount GetStorageAccount()
 		{
 			return CloudStorageAccount.Parse(storageConnectionString);

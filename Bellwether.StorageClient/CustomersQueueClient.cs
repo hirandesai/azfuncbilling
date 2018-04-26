@@ -6,12 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Bellwether.StorageClient
-{	
-	public class UtilizationQueueClient : BaseStorageQueueClient<UtilizationMessage>
+{
+	public class CustomersQueueClient: BaseStorageQueueClient<CustomerMessage>
 	{
-		public UtilizationQueueClient(string storageConnectionString) : base(QueueTypes.Subscription, storageConnectionString)
+		public CustomersQueueClient(string storageConnectionString) :base(QueueTypes.Customers, storageConnectionString)
 		{
-
+			
 		}
 	}
 }

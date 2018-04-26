@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Bellwether.StorageClient.MessageFormats
 {
-	public class SubscriptionMessage
+	public class SubscriptionMessage: CustomerMessage
 	{
-		public string CustomerId { get; set; }
+		public string SubscriptionId { get; set; }
 	}
 }

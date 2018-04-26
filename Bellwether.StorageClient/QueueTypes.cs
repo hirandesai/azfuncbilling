@@ -8,7 +8,7 @@ namespace Bellwether.StorageClient
 {
 	public enum QueueTypes
 	{
-		Subscription,
-		Utiliztion
+		Customers,
+		Subscriptions
 	}
 }

@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Bellwether.StorageClient
 {
-	public class SubscriptionQueueClient: BaseStorageQueueClient<SubscriptionMessage>
+	public class SubscriptionsQueueClient : BaseStorageQueueClient<SubscriptionMessage>
 	{
-		public SubscriptionQueueClient(string storageConnectionString) :base(QueueTypes.Subscription, storageConnectionString)
+		public SubscriptionsQueueClient(string storageConnectionString) : base(QueueTypes.Subscriptions, storageConnectionString)
 		{
 
 		}
