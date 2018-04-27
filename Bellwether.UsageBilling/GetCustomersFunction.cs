@@ -12,6 +12,7 @@ using Bellwether.MpnApi;
 using Bellwether.StorageClient;
 using Bellwether.StorageClient.MessageFormats;
 using Bellwether.Dal;
+using Bellwether.Dal.Entities;
 
 namespace Bellwether.UsageBilling
 {
@@ -21,12 +22,16 @@ namespace Bellwether.UsageBilling
 #if DEBUG
 		public static async Task RunAync([HttpTrigger(Route = "GetCustomers")]HttpRequestMessage req, TraceWriter log)
 #else
-		public static async Task RunAync([TimerTrigger("0 * 12 1/1 * *")]TimerInfo myTimer, TraceWriter log)
+		public static async Task RunAync([TimerTrigger("0 0 10 1/1 * *")]TimerInfo myTimer, TraceWriter log)
 #endif
 		{
 			log.Info($"Get customers function execution started at {DateTime.UtcNow} UTC");
 			try
 			{
+				log.Info($"Database initialization started.");
+				DbInitializer.init(ConfigurationHelper.GetConnectionString(ConfigurationKeys.DbConnectoinString));
+				log.Info($"Database initialization completed.");
+
 				string partnerServiceApiRoot = ConfigurationHelper.GetAppSetting(ConfigurationKeys.MPN.PartnerServiceApiRoot),
 									authority = ConfigurationHelper.GetAppSetting(ConfigurationKeys.MPN.Authority),
 									resourceUrl = ConfigurationHelper.GetAppSetting(ConfigurationKeys.MPN.ResourceUrl),
@@ -52,20 +57,23 @@ namespace Bellwether.UsageBilling
 
 				SeekBasedResourceCollection<Customer> customers;
 				IResourceCollectionEnumerator<SeekBasedResourceCollection<Customer>> enumerator = await mpnClient.GetCustomersAsync();
-				while (enumerator.HasValue)
+				if (enumerator != null)
 				{
-					customers = enumerator.Current;
-					if (customers?.Items != null && customers?.TotalCount > 0)
+					while (enumerator.HasValue)
 					{
-						await ProcessCustomers(customers, log);
+						customers = enumerator.Current;
+						if (customers?.Items != null && customers?.TotalCount > 0)
+						{
+							await ProcessCustomers(customers, log);
+						}
+						else
+						{
+							log.Info($"0 customers found");
+						}
+						log.Verbose($"Fetching next page");
+						await enumerator.NextAsync();
+						log.Verbose($"Next page retrived");
 					}
-					else
-					{
-						log.Info($"0 customers found");
-					}
-					log.Verbose($"Fetching next page");
-					await enumerator.NextAsync();
-					log.Verbose($"Next page retrived");
 				}
 				log.Info($"Finished processing customers");
 			}
@@ -79,6 +87,18 @@ namespace Bellwether.UsageBilling
 		private async static Task ProcessCustomers(SeekBasedResourceCollection<Customer> customers, TraceWriter log)
 		{
 			log.Verbose($"{customers.TotalCount } customers found");
+			DumpUtility blkOperation = new DumpUtility(ConfigurationHelper.GetConnectionString(ConfigurationKeys.DbConnectoinString));
+
+			blkOperation.Insert<CspCustomer>(customers.Items
+												.Select(s => new CspCustomer()
+												{
+													CustomerId = new Guid(s.Id),
+													TenantId = s.CompanyProfile != null ? new Guid(s.CompanyProfile.TenantId) : Guid.Empty,
+													CompanyName = s.CompanyProfile?.CompanyName,
+													Domain = s.CompanyProfile.Domain,
+													Relationship = s.RelationshipToPartner.ToString()
+												}).ToList());
+
 			CustomersQueueClient queueClient = new CustomersQueueClient(ConfigurationHelper.GetAppSetting(ConfigurationKeys.StorageConnectoinString));
 			foreach (var customer in customers.Items)
 			{

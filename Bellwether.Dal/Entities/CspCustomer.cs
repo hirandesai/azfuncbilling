@@ -10,7 +10,8 @@ namespace Bellwether.Dal.Entities
 	public class CspCustomer
 	{
 		[Key]
-		public Guid Id { get; set; }
+		public int Id { get; set; }
+		public Guid CustomerId { get; set; }
 
 		public Guid TenantId { get; set; }
 
