@@ -32,13 +32,12 @@ namespace Bellwether.MpnApi
 		public async Task<IResourceCollectionEnumerator<SeekBasedResourceCollection<Customer>>> GetCustomersAsync(int RecordsToFetch = 100)
 		{
 			IPartner scopedPartnerOperations = ApiCaller.With(RequestContextFactory.Instance.Create(Guid.NewGuid()));
+#if !RELEASE
+			var fieldFilter = new SimpleFieldFilter(CustomerSearchField.CompanyName.ToString(), FieldFilterOperation.StartsWith, "Elect");
+			var customersBatch = await scopedPartnerOperations.Customers.QueryAsync(QueryFactory.Instance.BuildIndexedQuery(RecordsToFetch, filter: fieldFilter));
+#else
 			var customersBatch = await scopedPartnerOperations.Customers.QueryAsync(QueryFactory.Instance.BuildIndexedQuery(RecordsToFetch));
-			//#if !RELEASE
-			//			var fieldFilter = new SimpleFieldFilter(CustomerSearchField.CompanyName.ToString(), FieldFilterOperation.StartsWith, "Elect");
-			//			var customersBatch = await scopedPartnerOperations.Customers.QueryAsync(QueryFactory.Instance.BuildIndexedQuery(RecordsToFetch, filter: fieldFilter));
-			//#else
-			//			var customersBatch = await scopedPartnerOperations.Customers.QueryAsync(QueryFactory.Instance.BuildIndexedQuery(RecordsToFetch));
-			//#endif
+#endif
 			return scopedPartnerOperations.Enumerators.Customers.Create(customersBatch);
 		}
 
@@ -47,7 +46,7 @@ namespace Bellwether.MpnApi
 			return await ApiCaller.Customers.ById(CustomerId).Subscriptions.GetAsync();
 		}
 
-		public async Task<ResourceCollection<AzureUtilizationRecord>> GetUtilizationssAsync(string CustomerId, string SubscriptionId,DateTimeOffset StartTime, DateTimeOffset EndTime)
+		public async Task<ResourceCollection<AzureUtilizationRecord>> GetUtilizationssAsync(string CustomerId, string SubscriptionId, DateTimeOffset StartTime, DateTimeOffset EndTime)
 		{
 			return await ApiCaller.Customers.ById(CustomerId)
 														.Subscriptions.ById(SubscriptionId)
