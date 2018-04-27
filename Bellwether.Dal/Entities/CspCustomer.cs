@@ -11,9 +11,9 @@ namespace Bellwether.Dal.Entities
 	{
 		[Key]
 		public int Id { get; set; }
-		public Guid CustomerId { get; set; }
+		public string CustomerId { get; set; }
 
-		public Guid TenantId { get; set; }
+		public string TenantId { get; set; }
 
 		public string Domain { get; set; }
 

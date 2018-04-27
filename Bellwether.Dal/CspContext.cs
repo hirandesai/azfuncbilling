@@ -14,7 +14,8 @@ namespace Bellwether.Dal
 	public class CspContext : DbContext
 	{
 		private static Dictionary<Type, string> tableNames = new Dictionary<Type, string>() {
-			{ typeof(CspCustomer),"CspCustomers"}
+			{ typeof(CspCustomer),"CspCustomers"},
+			{ typeof(CspSubscription),"CspSubscriptions"}
 		};
 
 		public CspContext()
@@ -34,13 +35,34 @@ namespace Bellwether.Dal
 		{
 			modelBuilder.Entity<CspCustomer>().ToTable(CspContext.GetTableName(typeof(CspCustomer)));
 			modelBuilder.Entity<CspCustomer>().Property(p => p.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
-			modelBuilder.Entity<CspCustomer>().Property(p => p.Domain).HasMaxLength(50);
-			modelBuilder.Entity<CspCustomer>().Property(p => p.CompanyName).HasMaxLength(50);
-			modelBuilder.Entity<CspCustomer>().Property(p => p.Relationship).HasMaxLength(50);
+			modelBuilder.Entity<CspCustomer>().Property(p => p.CustomerId).HasMaxLength(100).IsRequired();
+			modelBuilder.Entity<CspCustomer>().Property(p => p.TenantId).HasMaxLength(100).IsRequired();
+			modelBuilder.Entity<CspCustomer>().Property(p => p.Domain).HasMaxLength(100);
+			modelBuilder.Entity<CspCustomer>().Property(p => p.CompanyName).HasMaxLength(100);
+			modelBuilder.Entity<CspCustomer>().Property(p => p.Relationship).HasMaxLength(100);
 
 			modelBuilder.Entity<CspCustomer>()
 				.HasIndex(p => new { p.CustomerId, p.TenantId })
 				.HasName("IX_CSPCustomer_CustomerId_TenantId")
+				.IsUnique();
+
+			modelBuilder.Entity<CspSubscription>().ToTable(CspContext.GetTableName(typeof(CspSubscription)));
+			modelBuilder.Entity<CspSubscription>().Property(p => p.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+			modelBuilder.Entity<CspSubscription>().Property(p => p.SubscriptionId).HasMaxLength(100).IsRequired();
+			modelBuilder.Entity<CspSubscription>().Property(p => p.CustomerId).HasMaxLength(100).IsRequired();
+			modelBuilder.Entity<CspSubscription>().Property(p => p.OfferId).HasMaxLength(100);
+			modelBuilder.Entity<CspSubscription>().Property(p => p.OfferName).HasMaxLength(100);
+			modelBuilder.Entity<CspSubscription>().Property(p => p.FriendlyName).HasMaxLength(100);
+			modelBuilder.Entity<CspSubscription>().Property(p => p.UnitType).HasMaxLength(20);
+			modelBuilder.Entity<CspSubscription>().Property(p => p.Status).HasMaxLength(50);
+			modelBuilder.Entity<CspSubscription>().Property(p => p.BillingType).HasMaxLength(50);
+			modelBuilder.Entity<CspSubscription>().Property(p => p.BillingCycle).HasMaxLength(50);
+			modelBuilder.Entity<CspSubscription>().Property(p => p.ContractType).HasMaxLength(50);
+			modelBuilder.Entity<CspSubscription>().Property(p => p.OrderId).HasMaxLength(100);
+
+			modelBuilder.Entity<CspSubscription>()
+				.HasIndex(p => new { p.CustomerId, p.SubscriptionId, p.OfferId, p.Quantity, p.OrderId })
+				.HasName("IX_CspSubscription_CusId_SubId_OffId_Qty_OrdId")
 				.IsUnique();
 
 			base.OnModelCreating(modelBuilder);

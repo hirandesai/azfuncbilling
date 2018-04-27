@@ -54,6 +54,7 @@
     <Compile Include="CspContextInitializer.cs" />
     <Compile Include="DumpUtility.cs" />
     <Compile Include="Entities\CspCustomer.cs" />
+    <Compile Include="Entities\CspSubscription.cs" />
     <Compile Include="Migrations\201804260944390_initial.cs" />
     <Compile Include="Migrations\201804260944390_initial.Designer.cs">
       <DependentUpon>201804260944390_initial.cs</DependentUpon>
@@ -61,6 +62,10 @@
     <Compile Include="Migrations\201804270607371_AddedIdentityColumnToCspCustomers.cs" />
     <Compile Include="Migrations\201804270607371_AddedIdentityColumnToCspCustomers.Designer.cs">
       <DependentUpon>201804270607371_AddedIdentityColumnToCspCustomers.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804270929252_AddedSubscriptionsTable.cs" />
+    <Compile Include="Migrations\201804270929252_AddedSubscriptionsTable.Designer.cs">
+      <DependentUpon>201804270929252_AddedSubscriptionsTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -81,6 +86,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804270607371_AddedIdentityColumnToCspCustomers.resx">
       <DependentUpon>201804270607371_AddedIdentityColumnToCspCustomers.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804270929252_AddedSubscriptionsTable.resx">
+      <DependentUpon>201804270929252_AddedSubscriptionsTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
