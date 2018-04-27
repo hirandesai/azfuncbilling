@@ -39,12 +39,12 @@ namespace Bellwether.UsageBilling
 									applicationSecret = ConfigurationHelper.GetAppSetting(ConfigurationKeys.MPN.ApplicationSecret),
 									applicationDomian = ConfigurationHelper.GetAppSetting(ConfigurationKeys.MPN.ApplicationDomain);
 
-				log.Info($"Partner Service Api Root {partnerServiceApiRoot}");
-				log.Info($"Authority is {authority}");
-				log.Info($"Resource URL is {resourceUrl}");
-				log.Info($"Application Id is {applicationId}");
-				log.Info($"Application Secret is {new string('*', applicationSecret.Length)}");
-				log.Info($"Application Domain is {applicationDomian}");
+				log.Verbose($"Partner Service Api Root {partnerServiceApiRoot}");
+				log.Verbose($"Authority is {authority}");
+				log.Verbose($"Resource URL is {resourceUrl}");
+				log.Verbose($"Application Id is {applicationId}");
+				log.Verbose($"Application Secret is {new string('*', applicationSecret.Length)}");
+				log.Verbose($"Application Domain is {applicationDomian}");
 
 				log.Info($"Connecting to MPN network");
 				MpnApiClient mpnClient = await MpnApiClient.CreateAsync(partnerServiceApiRoot
@@ -86,19 +86,19 @@ namespace Bellwether.UsageBilling
 
 		private async static Task ProcessCustomers(SeekBasedResourceCollection<Customer> customers, TraceWriter log)
 		{
-			log.Verbose($"{customers.TotalCount } customers found");
+			log.Info($"{customers.TotalCount } customers found");
+			log.Info($"Inserting Customer data into database");
 			DumpUtility blkOperation = new DumpUtility(ConfigurationHelper.GetConnectionString(ConfigurationKeys.DbConnectoinString));
-
 			blkOperation.Insert<CspCustomer>(customers.Items
 												.Select(s => new CspCustomer()
 												{
-													CustomerId = new Guid(s.Id),
-													TenantId = s.CompanyProfile != null ? new Guid(s.CompanyProfile.TenantId) : Guid.Empty,
+													CustomerId = s.Id,
+													TenantId = s.CompanyProfile != null ? s.CompanyProfile.TenantId : string.Empty,
 													CompanyName = s.CompanyProfile?.CompanyName,
 													Domain = s.CompanyProfile.Domain,
 													Relationship = s.RelationshipToPartner.ToString()
 												}).ToList());
-
+			log.Info($"Database operation completed. Adding messages to queue");
 			CustomersQueueClient queueClient = new CustomersQueueClient(ConfigurationHelper.GetAppSetting(ConfigurationKeys.StorageConnectoinString));
 			foreach (var customer in customers.Items)
 			{
@@ -116,6 +116,7 @@ namespace Bellwether.UsageBilling
 					log.Error($"Some error occured for customer - {customer.Id}, Relationship {customer.RelationshipToPartner}", ex);
 				}
 			}
+			log.Info($"Message are added to queue.");
 		}
 	}
 }

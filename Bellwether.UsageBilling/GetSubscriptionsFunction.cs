@@ -3,6 +3,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Bellwether.Configuration;
+using Bellwether.Dal;
+using Bellwether.Dal.Entities;
 using Bellwether.MpnApi;
 using Bellwether.StorageClient;
 using Bellwether.StorageClient.MessageFormats;
@@ -33,6 +35,10 @@ namespace Bellwether.UsageBilling
 			log.Info($"Get subscriptoins function execution started at {DateTime.UtcNow} UTC");
 			try
 			{
+				log.Info($"Database initialization started.");
+				DbInitializer.init(ConfigurationHelper.GetConnectionString(ConfigurationKeys.DbConnectoinString));
+				log.Info($"Database initialization completed.");
+
 				string partnerServiceApiRoot = ConfigurationHelper.GetAppSetting(ConfigurationKeys.MPN.PartnerServiceApiRoot),
 									authority = ConfigurationHelper.GetAppSetting(ConfigurationKeys.MPN.Authority),
 									resourceUrl = ConfigurationHelper.GetAppSetting(ConfigurationKeys.MPN.ResourceUrl),
@@ -74,17 +80,45 @@ namespace Bellwether.UsageBilling
 		}
 		private async static Task ProcessSubscriptions(ResourceCollection<Subscription> subscriptions, string CustomerId, TraceWriter log)
 		{
-			log.Verbose($"{subscriptions.TotalCount } subscriptions found");
-			SubscriptionsQueueClient queueClient = new SubscriptionsQueueClient(ConfigurationHelper.GetAppSetting(ConfigurationKeys.StorageConnectoinString));
-			foreach (var subscription in subscriptions.Items)
+			if (subscriptions != null)
 			{
-				try
+				log.Verbose($"{subscriptions.TotalCount } subscriptions found");
+
+				DumpUtility blkOperation = new DumpUtility(ConfigurationHelper.GetConnectionString(ConfigurationKeys.DbConnectoinString));
+
+				blkOperation.Insert<CspSubscription>(subscriptions.Items
+													.Select(s => new CspSubscription()
+													{
+														SubscriptionId = s.Id,
+														CustomerId = s.Id,
+														OfferId = s.OfferId,
+														OfferName = s.OfferName,
+														FriendlyName = s.FriendlyName,
+														Quantity = s.Quantity,
+														UnitType = s.UnitType,
+														CreationDateUtc = s.CreationDate,
+														EffectiveStartDateUtc = s.EffectiveStartDate,
+														CommitmentEndDateUtc = s.CommitmentEndDate,
+														Status = s.Status.ToString(),
+														AutoRenewEnabled = s.AutoRenewEnabled,
+														//IsTrial=s.isTrial,
+														BillingType = s.BillingType.ToString(),
+														BillingCycle = s.BillingCycle.ToString(),
+														ContractType = s.ContractType.ToString(),
+														OrderId = s.OrderId
+													}).ToList());
+
+				SubscriptionsQueueClient queueClient = new SubscriptionsQueueClient(ConfigurationHelper.GetAppSetting(ConfigurationKeys.StorageConnectoinString));
+				foreach (var subscription in subscriptions.Items)
 				{
-					await queueClient.AddMessageAsync(new SubscriptionMessage() { CustomerId = CustomerId, SubscriptionId = subscription.Id });
-				}
-				catch (Exception ex)
-				{
-					log.Error($"Some error occured for Customer {CustomerId} & Subscription{subscription.Id}", ex);
+					try
+					{
+						await queueClient.AddMessageAsync(new SubscriptionMessage() { CustomerId = CustomerId, SubscriptionId = subscription.Id });
+					}
+					catch (Exception ex)
+					{
+						log.Error($"Some error occured for Customer {CustomerId} & Subscription{subscription.Id}", ex);
+					}
 				}
 			}
 		}
