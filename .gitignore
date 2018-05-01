@@ -20,3 +20,5 @@
 /Bellwether.Dal/obj/Release
 /Bellwether.StorageClient/bin/Release
 /Bellwether.StorageClient/obj/Release
+/Bellwether.Dal/obj/local
+/Bellwether.StorageClient/obj/local

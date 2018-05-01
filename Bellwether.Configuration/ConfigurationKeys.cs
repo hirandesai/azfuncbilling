@@ -19,5 +19,10 @@ namespace Bellwether.Configuration
 			public const string ApplicationSecret = "ApplicationSecret";
 			public const string ApplicationDomain = "ApplicationDomain";
 		}
+		public class AzureRatesApi
+		{
+			public const string Currancy = "AzureRateCurrancy";
+			public const string Region = "AzureRateRegion";
+		}
 	}
 }

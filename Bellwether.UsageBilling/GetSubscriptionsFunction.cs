@@ -18,20 +18,22 @@ namespace Bellwether.UsageBilling
 	public static class GetSubscriptionsFunction
 	{
 		[FunctionName("GetSubscriptions")]
-#if DEBUG
-		public static async Task RunAync([HttpTrigger(Route = "GetSubscriptions")]HttpRequestMessage req, TraceWriter log)
-#else
 		public static async Task RunAync([QueueTrigger("customers")]CustomerMessage message, TraceWriter log)
-#endif
+
+		//#if DEBUG
+		//		public static async Task RunAync([HttpTrigger(Route = "GetSubscriptions")]HttpRequestMessage req, TraceWriter log)
+		//#else
+		//		public static async Task RunAync([QueueTrigger("customers")]CustomerMessage message, TraceWriter log)
+		//#endif
 
 		{
-#if DEBUG
-			var param = req.GetQueryNameValuePairs().FirstOrDefault(s => s.Key.Equals("customerid"));
-			CustomerMessage message = new CustomerMessage()
-			{
-				CustomerId = param.Value
-			};
-#endif
+			//#if DEBUG
+			//			var param = req.GetQueryNameValuePairs().FirstOrDefault(s => s.Key.Equals("customerid"));
+			//			CustomerMessage message = new CustomerMessage()
+			//			{
+			//				CustomerId = param.Value
+			//			};
+			//#endif
 			log.Info($"Get subscriptoins function execution started at {DateTime.UtcNow} UTC");
 			try
 			{
@@ -90,7 +92,7 @@ namespace Bellwether.UsageBilling
 													.Select(s => new CspSubscription()
 													{
 														SubscriptionId = s.Id,
-														CustomerId = s.Id,
+														CustomerId = CustomerId,
 														OfferId = s.OfferId,
 														OfferName = s.OfferName,
 														FriendlyName = s.FriendlyName,

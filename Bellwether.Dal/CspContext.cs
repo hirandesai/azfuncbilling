@@ -15,7 +15,9 @@ namespace Bellwether.Dal
 	{
 		private static Dictionary<Type, string> tableNames = new Dictionary<Type, string>() {
 			{ typeof(CspCustomer),"CspCustomers"},
-			{ typeof(CspSubscription),"CspSubscriptions"}
+			{ typeof(CspSubscription),"CspSubscriptions"},
+			{ typeof(CspUtilization),"CspUtilizations"},
+			{ typeof(CspAzureRateCard),"CspAzureRateCards"}
 		};
 
 		public CspContext()
@@ -63,6 +65,34 @@ namespace Bellwether.Dal
 			modelBuilder.Entity<CspSubscription>()
 				.HasIndex(p => new { p.CustomerId, p.SubscriptionId, p.OfferId, p.Quantity, p.OrderId })
 				.HasName("IX_CspSubscription_CusId_SubId_OffId_Qty_OrdId")
+				.IsUnique();
+
+			modelBuilder.Entity<CspUtilization>().ToTable(CspContext.GetTableName(typeof(CspUtilization)));
+			modelBuilder.Entity<CspUtilization>().Property(p => p.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+			modelBuilder.Entity<CspUtilization>().Property(p => p.CustomerId).HasMaxLength(100).IsRequired();
+			modelBuilder.Entity<CspUtilization>().Property(p => p.SubscriptionId).HasMaxLength(100).IsRequired();
+			modelBuilder.Entity<CspUtilization>().Property(p => p.ResourceGuid).HasMaxLength(100).IsRequired();
+			modelBuilder.Entity<CspUtilization>().Property(p => p.ResourceName).HasMaxLength(255);
+			modelBuilder.Entity<CspUtilization>().Property(p => p.Category).HasMaxLength(100);
+			modelBuilder.Entity<CspUtilization>().Property(p => p.SubCategory).HasMaxLength(100);
+			modelBuilder.Entity<CspUtilization>().Property(p => p.Region).HasMaxLength(50);
+			modelBuilder.Entity<CspUtilization>().Property(p => p.Unit).HasMaxLength(50);
+
+			modelBuilder.Entity<CspAzureRateCard>().ToTable(CspContext.GetTableName(typeof(CspAzureRateCard)));
+			modelBuilder.Entity<CspAzureRateCard>().Property(p => p.Id).HasDatabaseGeneratedOption(DatabaseGeneratedOption.Identity);
+			modelBuilder.Entity<CspAzureRateCard>().Property(p => p.MeterId).HasMaxLength(100).IsRequired();
+			modelBuilder.Entity<CspAzureRateCard>().Property(p => p.MeterName).HasMaxLength(100).IsRequired();
+			modelBuilder.Entity<CspAzureRateCard>().Property(p => p.RateKey).HasMaxLength(500);
+			modelBuilder.Entity<CspAzureRateCard>().Property(p => p.RateValue).HasMaxLength(500);
+			modelBuilder.Entity<CspAzureRateCard>().Property(p => p.Tags).HasMaxLength(255);
+			modelBuilder.Entity<CspAzureRateCard>().Property(p => p.Category).HasMaxLength(100);
+			modelBuilder.Entity<CspAzureRateCard>().Property(p => p.SubCategory).HasMaxLength(100);
+			modelBuilder.Entity<CspAzureRateCard>().Property(p => p.Region).HasMaxLength(50);
+			modelBuilder.Entity<CspAzureRateCard>().Property(p => p.Unit).HasMaxLength(50);
+
+			modelBuilder.Entity<CspAzureRateCard>()
+				.HasIndex(p => new { p.MeterId, p.RateKey,p.RateValue, p.Region, p.EffectiveDate })
+				.HasName("IX_CspAzureRateCard_MeterId_RateKey_RateVal_Region_EffDate")
 				.IsUnique();
 
 			base.OnModelCreating(modelBuilder);

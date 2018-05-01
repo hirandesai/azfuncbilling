@@ -22,6 +22,7 @@ namespace Bellwether.UsageBilling
 #if DEBUG
 		public static async Task RunAync([HttpTrigger(Route = "GetCustomers")]HttpRequestMessage req, TraceWriter log)
 #else
+		// CRON expressions format:: {second} {minute} {hour} {day} {month} {day-of-week}
 		public static async Task RunAync([TimerTrigger("0 0 10 1/1 * *")]TimerInfo myTimer, TraceWriter log)
 #endif
 		{
@@ -56,7 +57,8 @@ namespace Bellwether.UsageBilling
 				log.Info($"Connected to MPN network");
 
 				SeekBasedResourceCollection<Customer> customers;
-				IResourceCollectionEnumerator<SeekBasedResourceCollection<Customer>> enumerator = await mpnClient.GetCustomersAsync();
+				//Page size is only supported between 1 to 999
+				IResourceCollectionEnumerator<SeekBasedResourceCollection<Customer>> enumerator = await mpnClient.GetCustomersAsync(500);
 				if (enumerator != null)
 				{
 					while (enumerator.HasValue)

@@ -53,8 +53,10 @@
     <Compile Include="CspContextFactory.cs" />
     <Compile Include="CspContextInitializer.cs" />
     <Compile Include="DumpUtility.cs" />
+    <Compile Include="Entities\CspAzureRateCard.cs" />
     <Compile Include="Entities\CspCustomer.cs" />
     <Compile Include="Entities\CspSubscription.cs" />
+    <Compile Include="Entities\CspUtilization.cs" />
     <Compile Include="Migrations\201804260944390_initial.cs" />
     <Compile Include="Migrations\201804260944390_initial.Designer.cs">
       <DependentUpon>201804260944390_initial.cs</DependentUpon>
@@ -66,6 +68,14 @@
     <Compile Include="Migrations\201804270929252_AddedSubscriptionsTable.cs" />
     <Compile Include="Migrations\201804270929252_AddedSubscriptionsTable.Designer.cs">
       <DependentUpon>201804270929252_AddedSubscriptionsTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201804300710039_AddedUtilizationsTable.cs" />
+    <Compile Include="Migrations\201804300710039_AddedUtilizationsTable.Designer.cs">
+      <DependentUpon>201804300710039_AddedUtilizationsTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201805010231505_AddedAzureRateCardsTable.cs" />
+    <Compile Include="Migrations\201805010231505_AddedAzureRateCardsTable.Designer.cs">
+      <DependentUpon>201805010231505_AddedAzureRateCardsTable.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -89,6 +99,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201804270929252_AddedSubscriptionsTable.resx">
       <DependentUpon>201804270929252_AddedSubscriptionsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201804300710039_AddedUtilizationsTable.resx">
+      <DependentUpon>201804300710039_AddedUtilizationsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201805010231505_AddedAzureRateCardsTable.resx">
+      <DependentUpon>201805010231505_AddedAzureRateCardsTable.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

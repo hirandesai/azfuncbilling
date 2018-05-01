@@ -49,7 +49,6 @@ namespace Bellwether.Dal
 				}
 			}
 		}
-		// remove "this" if not on C# 3.0 / .NET 3.5
 		private DataTable ToDataTable<T>(IList<T> data)
 		{
 			PropertyDescriptorCollection props = TypeDescriptor.GetProperties(typeof(T));
